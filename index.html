@@ -228,7 +228,7 @@ function route(){const h=(location.hash.slice(1)||'home');const k=h.startsWith('
  const t=(D.pages.find(p=>p[0]===k)||D.pages[0])[1];document.title=t+' – فرع توزيع كهرباء ذي قار';
  window.scrollTo(0,0);clearInterval(timer);carousel();heroSlide();
  const r=$('#rings');if(r){const io=new IntersectionObserver(es=>{if(es[0].isIntersecting){r.querySelectorAll('.fg').forEach(c=>c.style.strokeDashoffset=c.dataset.t);io.disconnect()}},{threshold:.3});io.observe(r)}}
-addEventListener('hashchange',route);route();
+
 
 const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 function buildHtml(){const g=id=>document.getElementById(id);return '<!doctype html><html lang="ar" dir="rtl"><head>'+HEAD+'<style id="css">'+g('css').textContent+'</style></head><body><template id="shell">'+g('shell').innerHTML+'</template><script id="state" type="application/json">'+JSON.stringify(D).replace(/</g,'\\u003c')+'<\/script><script id="code">'+g('code').textContent+'<\/script></body></html>'}
@@ -275,4 +275,5 @@ async function renderAdmin(){const app=$('#app');app.innerHTML='<div class="wrap
   else if(act==='del'){if(b.dataset.s){D[k].splice(n,1);draw()}else{b.dataset.s=1;b.textContent='تأكيد؟'}}
   else if(act==='img')pickImg(d=>{D[k][n].img=d;draw()});
   else if(act==='save'){const m=$('#msg');b.disabled=true;m.textContent=' جارٍ النشر…';try{await(a?a.publish(buildHtml()):gh.save(buildHtml()));if(gh){m.textContent=' تم الحفظ ✓ يظهر التغيير للزوار خلال دقيقة تقريباً';b.disabled=false}}catch(er){b.disabled=false;m.textContent=gh?' تعذر الحفظ: '+er.message:er.code==='conflict'?' تم تحديث الموقع من جهة أخرى، سيُعاد التحميل.':er.code==='not_writer'||er.code==='not_granted'?' ليست لديك صلاحية النشر.':' تعذر النشر: '+(er.code||'')}}}}
+addEventListener('hashchange',route);route();
 </script></body></html>
