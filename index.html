@@ -259,7 +259,7 @@ function ghLogin(){return new Promise(res=>{const S=sessionStorage,v=k=>{try{ret
     const by=new TextEncoder().encode(html);let bin='';for(let i=0;i<by.length;i+=32768)bin+=String.fromCharCode.apply(null,by.subarray(i,i+32768));
     const p=await fetch(api,{method:'PUT',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify({message:'تحديث المحتوى من لوحة التحكم',content:btoa(bin),sha})});if(!p.ok)throw new Error(p.status===409?'الملف تغيّر على GitHub، أعد تحميل الصفحة':'GitHub '+p.status)}})}
   catch(e){m.textContent=' '+e.message}}})}
-async function renderAdmin(){const app=$('#app');app.innerHTML='<div class="wrap pg"><h1>لوحة التحكم</h1><p>جارٍ التحقق من الصلاحية…</p></div>';let u=null,a=null;if(!GH)try{u=await claude.use('user');a=await claude.use('artifact')}catch(e){}
+async function renderAdmin(){const app=$('#app');app.innerHTML='<div class="wrap pg"><h1>لوحة التحكم</h1><p>جارٍ التحقق من الصلاحية… (v3)</p></div>';let u=null,a=null;if(!GH)try{u=await claude.use('user');a=await claude.use('artifact')}catch(e){}
  let ok=false;try{ok=!!(u&&a&&u.canEdit())}catch(e){}
  let gh=null;if(!ok&&(GH||!window.claude)){gh=await ghLogin();if(!gh)return}
  if(!ok&&!gh){let ce='-';try{ce=u?String(u.canEdit()):'-'}catch(e){ce='error'}
