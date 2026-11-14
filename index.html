@@ -246,6 +246,7 @@ function draw(){const y=scrollY;let b='';
  if(tab==='home')b=`<div class="card">${fld('hero.h1','عنوان الهيرو',D.hero.h1)}${fld('hero.h2','العنوان الفرعي',D.hero.h2)}${fld('hero.p','الوصف',D.hero.p,'area')}${fld('complaints','رقم شكاوى المواطنين',D.complaints)}${fld('fb','رابط فيسبوك',D.fb)}${fld('yt','رابط يوتيوب',D.yt)}${fld('map','رابط الخريطة',D.map)}</div>`;
  $('#app').innerHTML=`<div class="wrap pg"><h1>لوحة التحكم</h1><p class="sub">التعديلات لا تظهر للزوار إلا بعد الضغط على «حفظ ونشر».</p><div class="tabs">${TB.map(([k,t])=>`<button class="btn ${k===tab?'':'g'}" data-a="tab" data-k="${k}">${t}</button>`).join('')}</div>${b}<div class="savebar"><button class="btn" data-a="save">حفظ ونشر</button><span id="msg"></span></div></div>`;scrollTo(0,y)}
 (async()=>{try{const u=await claude.use('user');if(u&&u.canEdit()){const l=document.createElement('a');l.className='ib';l.href='#admin';l.textContent='⚙';l.setAttribute('aria-label','لوحة التحكم');document.querySelector('.tools').prepend(l)}}catch(e){}})();
+const GH=/github\.io$/i.test(location.hostname);
 function ghLogin(){return new Promise(res=>{const S=sessionStorage,v=k=>{try{return S.getItem(k)||''}catch(e){return ''}};
  $('#app').innerHTML=`<div class="wrap pg"><h1>لوحة التحكم</h1><div class="card"><p>سجّل الدخول بمفتاح GitHub الخاص بمستودع الموقع.</p><label class="fl">المستودع (اسم المستخدم/اسم المستودع)<input id="gr" dir="ltr" value="${esc(v('gr'))}" placeholder="username/repo"></label><label class="fl">مسار الملف<input id="gp" dir="ltr" value="${esc(v('gp')||'index.html')}"></label><label class="fl">مفتاح GitHub (Token)<input id="gt" type="password" dir="ltr" value="${esc(v('gt'))}"></label><button class="btn" id="gb">دخول</button> <span id="gm"></span></div></div>`;
  $('#gb').onclick=async()=>{const repo=$('#gr').value.trim(),path=$('#gp').value.trim()||'index.html',tok=$('#gt').value.trim(),m=$('#gm');m.textContent=' جارٍ التحقق…';
@@ -258,9 +259,9 @@ function ghLogin(){return new Promise(res=>{const S=sessionStorage,v=k=>{try{ret
     const by=new TextEncoder().encode(html);let bin='';for(let i=0;i<by.length;i+=32768)bin+=String.fromCharCode.apply(null,by.subarray(i,i+32768));
     const p=await fetch(api,{method:'PUT',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify({message:'تحديث المحتوى من لوحة التحكم',content:btoa(bin),sha})});if(!p.ok)throw new Error(p.status===409?'الملف تغيّر على GitHub، أعد تحميل الصفحة':'GitHub '+p.status)}})}
   catch(e){m.textContent=' '+e.message}}})}
-async function renderAdmin(){const app=$('#app');app.innerHTML='<div class="wrap pg"><h1>لوحة التحكم</h1><p>جارٍ التحقق من الصلاحية…</p></div>';let u=null,a=null;try{u=await claude.use('user');a=await claude.use('artifact')}catch(e){}
+async function renderAdmin(){const app=$('#app');app.innerHTML='<div class="wrap pg"><h1>لوحة التحكم</h1><p>جارٍ التحقق من الصلاحية…</p></div>';let u=null,a=null;if(!GH)try{u=await claude.use('user');a=await claude.use('artifact')}catch(e){}
  let ok=false;try{ok=!!(u&&a&&u.canEdit())}catch(e){}
- let gh=null;if(!ok&&!window.claude){gh=await ghLogin();if(!gh)return}
+ let gh=null;if(!ok&&(GH||!window.claude)){gh=await ghLogin();if(!gh)return}
  if(!ok&&!gh){let ce='-';try{ce=u?String(u.canEdit()):'-'}catch(e){ce='error'}
  app.innerHTML='<div class="wrap pg"><h1>لوحة التحكم</h1><div class="card"><p>هذه الصفحة للمحررين المخولين فقط. افتحها بحساب لديه صلاحية التعديل على الموقع.</p><p class="sub">تشخيص: user='+(u?'yes':'no')+' | artifact='+(a?'yes':'no')+' | canEdit='+ce+'</p></div></div>';return}
  draw();
